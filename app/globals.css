@@ -475,6 +475,40 @@
   display: block;
 }
 
+/* Home hero stage copy (HeroSequence → HeroStoryCopy). The scene writes --in / --out (0–1) on each
+   line every frame from the scroll position; each word derives its own staggered progress, so the
+   words rise out of their masks one after another, and lift away the same way, as you scroll. */
+.hero-story-line {
+  --in: 1;
+  --out: 0;
+}
+.hero-story-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* room for descenders and the comma, without widening the line */
+  padding: 0.06em 0.05em 0.16em;
+  margin: -0.06em -0.05em -0.16em;
+}
+.hero-story-word {
+  --wi: clamp(0, calc(var(--in) * (1 + 0.16 * (var(--n) - 1)) - 0.16 * var(--i)), 1);
+  --wo: clamp(0, calc(var(--out) * (1 + 0.12 * (var(--n) - 1)) - 0.12 * var(--i)), 1);
+  display: inline-block;
+  transform: translate3d(0, calc((1 - var(--wi)) * 108% - var(--wo) * 108%), 0);
+  opacity: calc(var(--wi) - var(--wo));
+}
+.hero-story-body {
+  opacity: calc(clamp(0, var(--in) * 1.6 - 0.6, 1) - clamp(0, var(--out) * 1.8, 1));
+  transform: translate3d(0, calc((1 - var(--in)) * 0.75rem - var(--out) * 0.5rem), 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-story-word,
+  .hero-story-body {
+    transform: none;
+    opacity: 1;
+  }
+}
+
 /* ── Reduced motion: instant states, no decorative transitions ── */
 @media (prefers-reduced-motion: reduce) {
   *,

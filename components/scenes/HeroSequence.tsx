@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useRef, type CSSProperties, type ReactNode } from "react";
 import { useReducedMotion } from "@/components/motion/useReducedMotion";
 import { Button } from "@/components/ui/Button";
 import { media, sequences } from "@/content/media";
@@ -12,6 +12,9 @@ import { ScenePoster } from "./ScenePoster";
 import { SceneKeyframes, shade, splitArrow } from "./scene-utils";
 
 export type HeroStage = { index: string; label: string };
+
+/** Bold copy that builds word by word while the wall is finished: one entry per stage before the last. */
+export type HeroStory = { title: string; stages: { line: string; body: string }[] };
 
 export type HeroSequenceProps = {
   /** Small spec-style H1, e.g. "Drywall & Basement Renovations in Ottawa" */
@@ -27,6 +30,8 @@ export type HeroSequenceProps = {
   stages: HeroStage[];
   /** "Scroll to finish the wall ↓" */
   scrollCue: string;
+  /** Optional stage copy (H2 + an H3 per stage) that rises in and out with the scrub */
+  story?: HeroStory;
   /** Poster state only: no frames, no scroll scene (also what reduced motion and no-JS get) */
   forceStatic?: boolean;
   /** Dev preview: hold the scrubbed scene at this track progress (0–1) instead of following scroll */
@@ -58,6 +63,7 @@ export function HeroSequence({
   trustRow,
   stages,
   scrollCue,
+  story,
   forceStatic = false,
   demoProgress,
   headingAs: Heading = "h1",
@@ -181,7 +187,7 @@ export function HeroSequence({
                 data-el="sub"
                 className="t-lede col-span-full max-w-[52ch] text-[color:var(--ink)] md:col-span-8 lg:col-span-6"
               >
-                {sub}
+                {keepHyphenatedWhole(sub)}
               </p>
               <div data-el="cta" className="col-span-full flex flex-col gap-3 sm:flex-row sm:flex-wrap md:gap-4">
                 <Button href={primaryCta.href} size="lg" arrow>
@@ -197,6 +203,10 @@ export function HeroSequence({
                 </div>
               ) : null}
             </div>
+
+            {story && story.stages.length ? (
+              <HeroStoryCopy story={story} stages={stages} />
+            ) : null}
           </div>
 
           {/* Bottom bar: stage caption as a dimension string + scroll cue */}
@@ -272,6 +282,85 @@ export function HeroSequence({
   );
 }
 
+/**
+ * SplitText assigns each word to the line where the word starts. A word the browser breaks at its
+ * hyphen while measuring ("paint-" / "ready") lands whole on the first line and then overflows it, so
+ * hyphenated words are kept unbreakable in text the hero splits into lines.
+ */
+function keepHyphenatedWhole(text: string): ReactNode {
+  return text.split(/(\S+-\S+)/).map((part, i) =>
+    i % 2 ? (
+      <span key={i} className="whitespace-nowrap">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+}
+
+/**
+ * Stage copy over the scrubbing wall. Server-rendered (crawlable H2 + H3s) and invisible until the
+ * scene goes live; then each line's words rise in from their masks as its stage arrives and lift out
+ * as the next one comes, driven by the --in / --out variables the scene writes on every frame
+ * (see .hero-story-* in globals.css). Reduced motion: a static four-column strip under the headline.
+ */
+function HeroStoryCopy({ story, stages }: { story: HeroStory; stages: HeroStage[] }) {
+  return (
+    <div
+      data-el="story"
+      className="pointer-events-none absolute inset-x-[var(--page-pad)] bottom-6 opacity-0 transition-opacity duration-500 ease-[var(--ease-rake)] data-[live]:opacity-100 md:bottom-[4.75rem] motion-reduce:pointer-events-auto motion-reduce:static motion-reduce:mt-12 motion-reduce:opacity-100 md:motion-reduce:mt-16"
+    >
+      {/* Its own scrim: the headline's scrim is away while the wall is being finished. */}
+      <div
+        aria-hidden="true"
+        className="absolute -bottom-28 -left-[var(--page-pad)] h-[calc(100%+16rem)] w-[min(100vw,72rem)] motion-reduce:hidden"
+        style={{
+          backgroundImage: `radial-gradient(130% 95% at 0% 100%, ${shade(94)}, ${shade(80)} 38%, ${shade(48)} 62%, transparent 82%)`,
+        }}
+      />
+      <h2 className="t-spec relative flex items-center gap-3 text-[color:var(--ink)]">
+        <span aria-hidden="true" className="h-px w-6 shrink-0 bg-worklight md:w-10" />
+        {story.title}
+      </h2>
+      <ol className="relative mt-4 grid md:mt-5 motion-reduce:gap-8 md:motion-reduce:grid-cols-4 md:motion-reduce:gap-[var(--gutter)]">
+        {story.stages.map((entry, k) => {
+          const words = entry.line.split(" ");
+          return (
+            <li
+              key={entry.line}
+              data-story-line=""
+              className="hero-story-line col-start-1 row-start-1 motion-reduce:col-auto motion-reduce:row-auto"
+              style={{ "--n": words.length } as CSSProperties}
+            >
+              {stages[k] ? (
+                <p className="t-spec mb-3 hidden tabular-nums motion-reduce:block">
+                  {stages[k].index} — {stages[k].label}
+                </p>
+              ) : null}
+              <h3 className="max-w-[13ch] font-display [text-shadow:0_2px_28px_rgb(20_21_24/0.55)] text-[clamp(2.25rem,5.2vw,4.5rem)] font-[800] leading-[0.98] tracking-[-0.02em] text-[color:var(--ink)] [font-stretch:125%] motion-reduce:text-[clamp(1.5rem,2.2vw,2rem)]">
+                {words.map((word, i) => (
+                  <Fragment key={i}>
+                    <span className="hero-story-mask">
+                      <span className="hero-story-word" style={{ "--i": i } as CSSProperties}>
+                        {word}
+                      </span>
+                    </span>
+                    {i < words.length - 1 ? " " : null}
+                  </Fragment>
+                ))}
+              </h3>
+              <p className="hero-story-body mt-3 max-w-[36ch] text-[0.9375rem] leading-relaxed text-plaster/85 md:mt-4 md:text-base">
+                {entry.body}
+              </p>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 /** The trust items as one mono dimension string: ├─ FREE ON-SITE QUOTES ─┼─ FULLY INSURED ─┤ */
 export function HeroTrustRow({ items, className }: { items: string[]; className?: string }) {
   return (
@@ -308,6 +397,8 @@ type HeroEls = {
   cue: HTMLElement;
   rail: HTMLElement;
   ticks: HTMLElement[];
+  story: HTMLElement | null;
+  storyLines: HTMLElement[];
 };
 
 function collect(section: HTMLElement): HeroEls | null {
@@ -333,6 +424,8 @@ function collect(section: HTMLElement): HeroEls | null {
     cue: get("cue")!,
     rail,
     ticks: Array.from(rail.querySelectorAll<HTMLElement>("[data-tick]")),
+    story: get("story"),
+    storyLines: Array.from(section.querySelectorAll<HTMLElement>("[data-story-line]")),
   };
 }
 
@@ -381,9 +474,25 @@ function createHeroScene(els: HeroEls, { demoProgress }: { demoProgress?: number
     els.ticks.forEach((tick, i) => tick.toggleAttribute("data-passed", s >= i - 0.02));
   }
 
+  /**
+   * Stage copy: line k builds in as stage k arrives (s ≈ k-0.42 → k-0.08) and lifts out halfway to the
+   * next (k+0.42 → k+0.70); the last line holds until the wall is finished. Words stagger in CSS.
+   */
+  function setStory(s: number) {
+    const lines = els.storyLines;
+    lines.forEach((line, k) => {
+      const inValue = clamp01((s - k + 0.42) / 0.34);
+      const outValue = k === lines.length - 1 ? clamp01((s - k - 0.75) / 0.25) : clamp01((s - k - 0.42) / 0.28);
+      line.style.setProperty("--in", inValue.toFixed(3));
+      line.style.setProperty("--out", outValue.toFixed(3));
+    });
+  }
+
   function showFrame(f: number) {
     painter?.setFrame(f);
-    setStage(stageValue(f, marks, frameCount()));
+    const s = stageValue(f, marks, frameCount());
+    setStage(s);
+    setStory(s);
   }
 
   function setHeadlineShown(shown: boolean) {
@@ -400,6 +509,8 @@ function createHeroScene(els: HeroEls, { demoProgress }: { demoProgress?: number
     if (resolveTl && Math.abs(resolveTl.progress() - reveal) > 0.0005) resolveTl.progress(reveal);
     els.cue.style.opacity = (1 - clamp01(p / 0.05)).toFixed(3);
     setHeadlineShown(reveal > 0.5);
+    // Hand over to the headline the moment it starts resolving, so the two never overlap.
+    els.story?.toggleAttribute("data-live", phase === "scrub" && reveal <= 0.01);
   }
 
   function enterScrub() {
@@ -597,6 +708,11 @@ function createHeroScene(els: HeroEls, { demoProgress }: { demoProgress?: number
       }
       els.captions.forEach((li, i) => li.toggleAttribute("data-active", i === els.captions.length - 1));
       els.rail.style.setProperty("--fill", "1");
+      els.story?.removeAttribute("data-live");
+      els.storyLines.forEach((line) => {
+        line.style.removeProperty("--in");
+        line.style.removeProperty("--out");
+      });
       els.ticks.forEach((tick) => tick.setAttribute("data-passed", ""));
       void loadGsap().then(({ ScrollTrigger }) => ScrollTrigger.refresh());
     },

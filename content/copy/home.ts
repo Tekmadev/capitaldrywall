@@ -19,6 +19,20 @@ export const homeHero = {
     { index: "05", label: "Paint-ready" },
   ],
   scrollCue: "Scroll to finish the wall ↓",
+  /**
+   * Bold copy that builds word by word while the wall is being finished (stages 01–04; at 05 the
+   * headline resolves). Lines echo the drywall display line; bodies are drawn from the copy deck
+   * (drywall installation, taping, mud drying time). Approved by the owner, 1 Nov 2026.
+   */
+  story: {
+    title: "The finish, in five stages",
+    stages: [
+      { line: "Hung straight.", body: "Screws, not nails, on layouts planned to keep seams to a minimum." },
+      { line: "Taped tight.", body: "The part that decides whether a wall looks finished or looks patched." },
+      { line: "Three coats, feathered wide.", body: "Each coat gets about 24 hours to dry before the next goes on." },
+      { line: "Sanded smooth.", body: "Dust-extraction sanding until the surface is even and ready for primer." },
+    ],
+  },
 };
 
 export const primaryServices = {

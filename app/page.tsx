@@ -58,6 +58,7 @@ export default function HomePage() {
         call={homeHero.call}
         stages={homeHero.stages}
         scrollCue={homeHero.scrollCue}
+        story={homeHero.story}
         trustRow={<TrustStrip tone="dark" />}
       />
 

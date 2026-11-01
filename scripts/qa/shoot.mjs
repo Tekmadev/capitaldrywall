@@ -161,7 +161,7 @@ const overflow = await evaluate(`(() => {
 const filmstrip = opt("filmstrip", 0);
 if (filmstrip > 0) {
   const frames = [];
-  const max = await evaluate("document.documentElement.scrollHeight - innerHeight");
+  const max = opt("max", 0) || (await evaluate("document.documentElement.scrollHeight - innerHeight"));
   for (let i = 0; i < filmstrip; i++) {
     const y = Math.round((i * max) / Math.max(1, filmstrip - 1));
     await evaluate(`(async () => { scrollTo(0, ${y}); await new Promise(r => setTimeout(r, 900)); return true })()`);
