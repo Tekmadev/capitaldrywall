@@ -1,0 +1,99 @@
+/*
+ * Final CTA: a dark wall with one work light carried slowly along it from the left (brief §7, ART
+ * DIRECTION row 15). Transform-only animation (compositor), paused for reduced motion. The plaster
+ * grain sits on top in overlay mode, so the texture only shows where the light grazes the wall.
+ */
+.fcta-wall {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  /* The wall paint itself: the blend layers below need an opaque backdrop inside this
+     stacking context, otherwise the overlay grain would composite as plain grey noise. */
+  background-color: var(--surface);
+}
+
+/* Floor shadow and a little ceiling falloff, so the plane reads as a wall, not a void */
+.fcta-wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgb(0 0 0 / 0.42), transparent 26%),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.28), transparent 22%);
+}
+
+.fcta-beam {
+  position: absolute;
+  inset-block: 0;
+  left: -50%;
+  width: 150%;
+  background:
+    radial-gradient(26% 34% at 34% 66%, rgb(244 166 42 / 0.22), transparent 72%),
+    radial-gradient(62% 15% at 40% 69%, rgb(244 166 42 / 0.1), transparent 76%),
+    radial-gradient(34% 70% at 0% 62%, rgb(244 166 42 / 0.14), transparent 70%);
+  transform: translate3d(-14%, 0, 0);
+  animation: fcta-beam-sweep 26s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  will-change: transform;
+}
+
+.fcta-still .fcta-beam {
+  animation: none;
+  transform: translate3d(8%, 0, 0);
+}
+
+@keyframes fcta-beam-sweep {
+  from {
+    transform: translate3d(-14%, 0, 0);
+  }
+  to {
+    transform: translate3d(28%, 0, 0);
+  }
+}
+
+.fcta-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.75;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* Hairline rake across the top boundary: sweeps in as the section enters (scroll-driven where
+   supported, otherwise simply drawn). */
+.fcta-rake {
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .fcta-rake {
+      animation: fcta-rake-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+
+@keyframes fcta-rake-in {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fcta-beam {
+    animation: none;
+    transform: translate3d(8%, 0, 0);
+  }
+}

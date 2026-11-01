@@ -1,0 +1,3 @@
+/* Moved to app/globals.css ("UTILITY PAGES"). Nothing imports this file any more: the root
+   not-found boundary is part of every route, so a stylesheet imported by the 404 was preloaded,
+   unused, on every page. Safe to delete. */

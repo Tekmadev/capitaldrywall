@@ -1,0 +1,131 @@
+/* ──────────────────────────────────────────────────────────────
+   Renovations page helpers (the parts Tailwind can't say cleanly).
+   ────────────────────────────────────────────────────────────── */
+
+/* Edge bleeds: the distance from the site-container content edge to the viewport edge. Sections
+   that use them clip horizontally (overflow-x: clip), so a classic scrollbar never adds a scroll. */
+.reno-bleed-l,
+.reno-bleed-r,
+.reno-bleed-x,
+.reno-inset-l {
+  --reno-bleed: calc(var(--page-pad) + max(0px, (100vw - var(--container-site, 1440px)) / 2));
+}
+.reno-bleed-l {
+  margin-left: calc(var(--reno-bleed) * -1);
+}
+.reno-bleed-r {
+  margin-right: calc(var(--reno-bleed) * -1);
+}
+.reno-bleed-x {
+  margin-inline: calc(var(--reno-bleed) * -1);
+}
+/* Caption under a left-bleeding image: starts on the grid, not at the screen edge */
+.reno-inset-l {
+  padding-left: var(--reno-bleed);
+}
+
+/* Anchored sheets (#interior-painting …): html's scroll-padding reserves the full header + 1rem,
+   but the header has condensed by the time you land, so pull the section edge up to meet it. */
+.reno-anchor {
+  scroll-margin-top: calc(-1rem - var(--header-h) * (1 - var(--header-condense-scale, 1)));
+}
+
+/* Hero display line: wraps on purpose on phones, one line + a hanging second line from 768 px */
+.reno-display {
+  font-size: clamp(2.25rem, 11.5vw, 4.5rem);
+}
+@media (width >= 48rem) {
+  .reno-display {
+    font-size: var(--text-display-xl);
+  }
+  .reno-hang {
+    padding-left: calc((100% - 11 * var(--gutter)) / 12 * 2 + 2 * var(--gutter));
+  }
+}
+@media (width >= 64rem) {
+  .reno-hang {
+    padding-left: calc((100% - 11 * var(--gutter)) / 12 * 3 + 3 * var(--gutter));
+  }
+}
+
+/* Answer-first intro, set as a large general note */
+.reno-note {
+  font-size: clamp(1.25rem, 2.15vw, 2rem);
+  line-height: 1.42;
+  letter-spacing: -0.006em;
+}
+
+/* Hero sheet index: scroll-snap strip on phones, three joined panels from 768 px */
+.reno-strip {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--page-pad);
+  margin-inline: calc(var(--page-pad) * -1);
+  padding: 0.875rem var(--page-pad) 0.5rem;
+  scrollbar-width: none;
+}
+.reno-strip::-webkit-scrollbar {
+  display: none;
+}
+.reno-strip > li {
+  flex: 0 0 min(64vw, 17rem);
+  scroll-snap-align: start;
+}
+@media (width >= 48rem) {
+  .reno-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+/* Responsive crop for the kitchen band (MediaFrame takes the ratio as a CSS value) */
+.reno-band {
+  --reno-band-ratio: 4 / 3;
+}
+@media (width >= 48rem) {
+  .reno-band {
+    --reno-band-ratio: 2 / 1;
+  }
+}
+@media (width >= 64rem) {
+  .reno-band {
+    --reno-band-ratio: 12 / 5;
+  }
+}
+
+/* Draw-on states (DrawOnView sets data-state; SSR, no-JS and reduced motion stay "drawn") */
+.reno-rake {
+  transform-origin: left center;
+  transition:
+    transform 1.6s var(--ease-rake),
+    opacity 1.6s var(--ease-rake);
+}
+[data-state="armed"] > .reno-rake {
+  transform: scaleX(0);
+  opacity: 0;
+}
+
+/* Wall elevation: crisp 1 px linework at any size; layers arrive in build order */
+.reno-elev svg :is(path, rect, circle) {
+  vector-effect: non-scaling-stroke;
+}
+.reno-elev .reno-layer {
+  transition:
+    opacity 700ms var(--ease-rake),
+    transform 700ms var(--ease-rake);
+  transition-delay: calc(var(--i, 0) * 150ms + 150ms);
+}
+.reno-elev[data-state="armed"] .reno-layer {
+  opacity: 0;
+  transform: translateX(10px);
+}
+.reno-elev[data-state="armed"] .reno-layer-base {
+  transform: none;
+}

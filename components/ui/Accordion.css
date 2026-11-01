@@ -1,0 +1,23 @@
+/*
+ * Accordion height animation (progressive enhancement).
+ * Browsers with ::details-content + interpolate-size (Chromium 131+) animate block-size;
+ * browsers with only ::details-content snap open; older browsers ignore the rule and open
+ * instantly. Reduced motion never animates.
+ */
+.acc-item {
+  interpolate-size: allow-keywords;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .acc-item::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+      block-size 480ms var(--ease-rake),
+      content-visibility 480ms allow-discrete;
+  }
+
+  .acc-item[open]::details-content {
+    block-size: auto;
+  }
+}

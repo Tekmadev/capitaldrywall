@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Capital Drywall & Renovation
 
-## Getting Started
+Website for Capital Drywall & Renovation, an Ottawa drywall and basement renovation contractor.
+Production domain: **capitaldrywallrenovations.com** (apex canonical; `www` redirects).
 
-First, run the development server:
+- Spec: [`docs/CAPITAL_BUILD_BRIEF.md`](docs/CAPITAL_BUILD_BRIEF.md) · copy: [`docs/CAPITAL_COPY.md`](docs/CAPITAL_COPY.md) · art direction: [`docs/ART_DIRECTION.md`](docs/ART_DIRECTION.md)
+- Before launch: [`LAUNCH_CHECKLIST.md`](LAUNCH_CHECKLIST.md) (every CONFIRM item and where it appears)
+- Generated imagery log: [`assets-src/MANIFEST.md`](assets-src/MANIFEST.md)
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # optional: integrations work in demo mode without keys
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Design-system sandbox (every component and state, demo mode only): <http://localhost:3000/dev/kitchen-sink>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build && npm run start   # production build
+npm run lint
+npx tsc --noEmit -p .
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Where things live
 
-## Learn More
+| Path | What |
+|---|---|
+| `content/site.config.ts` | Every business fact + feature flags (`// CONFIRM` markers). `null`/`false` hides its UI. |
+| `content/copy/*.ts` | Page copy, verbatim from the copy deck |
+| `content/faq.ts` | Single FAQ source: FAQ UI, FAQPage JSON-LD and `llms.txt` |
+| `content/services.ts`, `areas.ts`, `pricing.ts`, `projects.ts`, `media.ts` | Services, service areas, prices + estimator rates, before/after projects, image registry |
+| `app/globals.css` | "Raking Light" design tokens (Tailwind v4 `@theme`) and utilities |
+| `components/ui` | Design-system primitives (Button, SectionHeader, DimensionLine, MediaFrame, BeforeAfterSlider, …) |
+| `components/scenes` | Scroll scenes: hero wall sequence, raking-light test, basement transformation, wall layers |
+| `components/sections` | Page sections (shared + per page) |
+| `components/forms` | Multi-step quote form, compact form, basement estimator |
+| `app/api/quote`, `app/api/upload` | Lead handler (Resend + optional webhook) and Vercel Blob upload tokens |
+| `lib/schema.ts`, `lib/seo.ts`, `lib/llms.ts` | JSON-LD, metadata, `llms.txt` / `llms-full.txt` |
+| `public/sequences` | AVIF frame sequences for the scroll scenes |
 
-To learn more about Next.js, take a look at the following resources:
+## Modes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`NEXT_PUBLIC_SITE_MODE=demo` (default) shows badged sample images and the dev kitchen sink and accepts quote
+requests without email keys. `production` hides samples (sections with no real items hide themselves), disables
+`/dev`, and requires a lead delivery channel (Resend or `LEAD_WEBHOOK_URL`).

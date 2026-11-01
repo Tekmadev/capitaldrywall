@@ -1,0 +1,12 @@
+# Raw generated sources (stills, clips, PNG frames): MANIFEST.md lives in git, not the deploy
+/assets-src
+# Specs and agent notes aren't needed at build time
+/docs
+/.claude
+# Local build output and QA reports
+/.next
+/.lighthouse
+/node_modules
+*.log
+.env*.local
+.DS_Store

@@ -1,0 +1,100 @@
+/* Drywall page (/drywall-ottawa). Classes are prefixed dw- (layout) and fl- (finish levels). */
+
+/* Distance from the container's content edge to the viewport edge: the page padding plus the
+   centring margin above 1440 px. Sections that use a bleed clip horizontal overflow. */
+.dw-bleed-r,
+.dw-bleed-l,
+.dw-plate {
+  --dw-bleed: calc(var(--page-pad) + max(0px, (100vw - var(--container-site)) / 2));
+}
+
+/* Media that runs off one edge of the sheet */
+.dw-bleed-r {
+  margin-right: calc(-1 * var(--dw-bleed));
+}
+.dw-bleed-l {
+  margin-left: calc(-1 * var(--dw-bleed));
+}
+/* Captions stay on the sheet: they never start at the viewport edge */
+.dw-bleed-l figcaption,
+.dw-bleed-l .dw-keep {
+  padding-left: var(--dw-bleed);
+}
+.dw-bleed-r .dw-keep {
+  padding-right: var(--dw-bleed);
+}
+
+/* Dark plate inside a light section: full bleed on phones, bleeding off the left edge from 1024 px.
+   The padding puts its contents back on the page grid. */
+.dw-plate {
+  margin-inline: calc(-1 * var(--dw-bleed));
+  padding-inline: var(--dw-bleed);
+}
+@media (width >= 64rem) {
+  .dw-plate {
+    margin-right: 0;
+    padding-right: 0;
+  }
+}
+
+/* ── Finish levels drawing ─────────────────────────────────────── */
+.fl-anim {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 450ms var(--ease-rake),
+    transform 700ms var(--ease-rake);
+}
+
+/* Section A–A: on phones the drawing is shown at 2x, centred on the joint */
+.fl-section {
+  width: 200%;
+  margin-left: -50%;
+  max-width: none;
+}
+@media (width >= 40rem) {
+  .fl-section {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Schedule row for the level that is selected above it */
+.fl-row {
+  transition: background-color 250ms var(--ease-rake);
+}
+.fl-row > th {
+  position: relative;
+}
+.fl-row > th::before {
+  content: "";
+  position: absolute;
+  inset-block: -1px;
+  left: 0;
+  width: 3px;
+  background: var(--color-worklight);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 300ms var(--ease-rake);
+}
+:is(
+    [data-level="0"] .fl-row[data-row="0"],
+    [data-level="1"] .fl-row[data-row="1"],
+    [data-level="2"] .fl-row[data-row="2"],
+    [data-level="3"] .fl-row[data-row="3"],
+    [data-level="4"] .fl-row[data-row="4"],
+    [data-level="5"] .fl-row[data-row="5"]
+  ) {
+  background-color: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+:is(
+    [data-level="0"] .fl-row[data-row="0"],
+    [data-level="1"] .fl-row[data-row="1"],
+    [data-level="2"] .fl-row[data-row="2"],
+    [data-level="3"] .fl-row[data-row="3"],
+    [data-level="4"] .fl-row[data-row="4"],
+    [data-level="5"] .fl-row[data-row="5"]
+  )
+  > th::before {
+  transform: scaleY(1);
+}

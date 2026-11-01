@@ -1,0 +1,237 @@
+/*
+ * ProcessStepper layouts. Unlayered CSS (beats Tailwind utilities), so properties set here are not
+ * also set with utility classes on the same elements.
+ *
+ *  - base       vertical stepper: one hairline running down through the detail bubbles
+ *  - columns    five joined columns from 1024 px: the compact layout (.ps-columns, drywall page),
+ *               and the home track whenever it is not running as one (reduced motion, no JS)
+ *  - track      [data-mode="track"] on an ancestor (ProcessTrack, desktop + motion): horizontal
+ *               panels joined by ONE long dimension line with a tick at every step
+ */
+
+.ps-track {
+  position: relative;
+}
+
+.ps-list {
+  position: relative;
+  display: grid;
+}
+
+.ps-step {
+  position: relative;
+  display: grid;
+  align-content: start;
+  grid-template-columns: 52px minmax(0, 1fr);
+  column-gap: 1.25rem;
+  padding-bottom: 3rem;
+}
+
+.ps-step:last-child {
+  padding-bottom: 0;
+}
+
+@media (width >= 48rem) {
+  .ps-step {
+    column-gap: 2rem;
+    padding-bottom: 3.5rem;
+  }
+}
+
+/* Segment from this bubble to the next one: together they read as one continuous line */
+.ps-connector {
+  position: absolute;
+  left: 25.5px;
+  top: 52px;
+  bottom: 0;
+  width: 1px;
+  background: color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.ps-step:last-child .ps-connector {
+  display: none;
+}
+
+/* Perpendicular tick where the line meets each bubble (bottom of the run) */
+.ps-connector::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -5px;
+  width: 11px;
+  height: 1px;
+  background: inherit;
+}
+
+.ps-marker {
+  position: relative;
+  z-index: 1;
+  width: 52px;
+  height: 52px;
+  border-radius: 9999px;
+  background: var(--surface);
+}
+
+.ps-leader {
+  display: none;
+}
+
+.ps-content {
+  padding-top: 0.5rem;
+}
+
+.ps-title {
+  color: var(--ink);
+}
+
+.ps-body {
+  margin-top: 0.75rem;
+  max-width: 40ch;
+  color: var(--muted);
+}
+
+.ps-line,
+.ps-progress {
+  display: none;
+}
+
+/* ── Columns: five joined columns from 1024 px ────────────────
+   The compact layout, and the track layout until ProcessTrack switches it to a pinned track
+   (it never does with reduced motion or without JS, so those desktops get this schedule rather
+   than a narrow vertical stepper in a wide section). */
+@media (width >= 64rem) {
+  :is(.ps-columns, [data-process-root]:not([data-mode="track"]) .ps-track) .ps-list {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: var(--gutter);
+  }
+
+  :is(.ps-columns, [data-process-root]:not([data-mode="track"]) .ps-track) .ps-step {
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: 0;
+  }
+
+  :is(.ps-columns, [data-process-root]:not([data-mode="track"]) .ps-track) .ps-connector {
+    top: 25.5px;
+    left: 52px;
+    right: calc(-1 * var(--gutter));
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+
+  :is(.ps-columns, [data-process-root]:not([data-mode="track"]) .ps-track) .ps-connector::after {
+    left: auto;
+    right: 0;
+    bottom: -5px;
+    width: 1px;
+    height: 11px;
+  }
+
+  :is(.ps-columns, [data-process-root]:not([data-mode="track"]) .ps-track) .ps-content {
+    padding-top: 1.75rem;
+  }
+
+  :is(.ps-columns, [data-process-root]:not([data-mode="track"]) .ps-track) .ps-body {
+    font-size: 1rem;
+  }
+}
+
+/* ── Track: pinned horizontal panels (desktop, motion allowed, JS on) ── */
+[data-process-root][data-mode="track"] .ps-track {
+  --panel-w: clamp(22rem, 33vw, 34rem);
+  width: max-content;
+}
+
+[data-process-root][data-mode="track"] .ps-list {
+  display: flex;
+}
+
+[data-process-root][data-mode="track"] .ps-step {
+  width: var(--panel-w);
+  flex-shrink: 0;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 0 clamp(2rem, 4vw, 4.5rem) 0 0;
+}
+
+[data-process-root][data-mode="track"] .ps-connector {
+  display: none;
+}
+
+/* Leader from the bubble down through the dimension line: the step's tick */
+[data-process-root][data-mode="track"] .ps-leader {
+  display: block;
+  position: absolute;
+  left: 25.5px;
+  top: 52px;
+  width: 1px;
+  height: 34px;
+  background: color-mix(in srgb, var(--ink) 45%, transparent);
+  transition: background-color 300ms var(--ease-rake);
+}
+
+[data-process-root][data-mode="track"] .ps-step[data-active] .ps-leader {
+  background: var(--color-worklight);
+}
+
+[data-process-root][data-mode="track"] .ps-content {
+  padding-top: 3.5rem;
+}
+
+[data-process-root][data-mode="track"] .ps-title {
+  font-size: clamp(1.75rem, 2.3vw, 2.5rem);
+  line-height: 1.05;
+  color: var(--muted);
+  transition: color 400ms var(--ease-rake);
+}
+
+[data-process-root][data-mode="track"] .ps-step[data-active] .ps-title {
+  color: var(--ink);
+}
+
+[data-process-root][data-mode="track"] .ps-body {
+  margin-top: 1rem;
+  max-width: 30ch;
+  font-size: var(--text-lede);
+  line-height: 1.55;
+}
+
+[data-process-root][data-mode="track"] .ps-line,
+[data-process-root][data-mode="track"] .ps-progress {
+  display: block;
+  position: absolute;
+  top: 76px;
+  left: 25.5px;
+  right: calc(var(--panel-w) - 25.5px);
+  height: 1px;
+}
+
+[data-process-root][data-mode="track"] .ps-line {
+  background: color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+/* End ticks of the dimension string */
+[data-process-root][data-mode="track"] .ps-line::before,
+[data-process-root][data-mode="track"] .ps-line::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  width: 1px;
+  height: 11px;
+  background: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+[data-process-root][data-mode="track"] .ps-line::before {
+  left: -14px;
+}
+
+[data-process-root][data-mode="track"] .ps-line::after {
+  right: -14px;
+}
+
+[data-process-root][data-mode="track"] .ps-progress {
+  height: 2px;
+  margin-top: -0.5px;
+  background: var(--color-worklight);
+  transform-origin: left center;
+  transform: scaleX(var(--process-progress, 0));
+}

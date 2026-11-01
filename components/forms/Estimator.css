@@ -1,0 +1,384 @@
+/*
+ * Basement estimator: the bits Tailwind can't express cleanly (range pseudo-elements,
+ * odometer strips, :has() focus rings). Plain global CSS with an `est-` namespace, because
+ * next.config's turbopack "*.css" rule turns CSS Modules into global CSS in this project.
+ * Colours come from the surface variables (--ink, --surface, --hairline…), so the sheet
+ * adapts to light or dark surfaces.
+ */
+
+.est-root {
+  --est-ease: var(--ease-rake, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* ── Odometer: each digit is a clipped column; the 0–9 strip is generated content,
+      so the DOM text stays the real number (crawlers, copy-paste, forced colours). ── */
+.est-odo {
+  --odo-lh: 1.08;
+  --odo-dur: 760ms;
+  display: inline-flex;
+  align-items: flex-start;
+  line-height: var(--odo-lh);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.est-odo-fast {
+  --odo-dur: 260ms;
+}
+
+.est-odo-char,
+.est-odo-digit {
+  display: inline-block;
+  height: calc(var(--odo-lh) * 1em);
+}
+
+.est-odo-digit {
+  position: relative;
+  overflow: hidden;
+  -webkit-text-fill-color: transparent;
+  mask-image: linear-gradient(to bottom, transparent 0, black 9%, black 91%, transparent 100%);
+}
+
+.est-odo-digit::before {
+  content: "0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  white-space: pre;
+  text-align: center;
+  -webkit-text-fill-color: currentColor;
+  transform: translate3d(0, calc(var(--d, 0) * var(--odo-lh) * -1em), 0);
+  transition: transform var(--odo-dur) var(--est-ease, cubic-bezier(0.22, 1, 0.36, 1));
+  transition-delay: calc(var(--i, 0) * 45ms);
+}
+
+/* ── Measuring tape (native range input over a drawn blade) ── */
+.est-tape {
+  --thumb-w: 30px;
+  --thumb-h: 72px;
+  --blade-inset: 10px;
+  position: relative;
+  height: var(--thumb-h);
+}
+
+.est-blade {
+  position: absolute;
+  inset-inline: 0;
+  top: var(--blade-inset);
+  bottom: var(--blade-inset);
+  background: var(--surface-raised);
+  border-block: 1px solid color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+/* Tick scale, inset by half a thumb so tick n sits exactly under the thumb centre at value n */
+.est-scale {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(var(--thumb-w) / 2);
+}
+
+.est-extent,
+.est-extent-shade {
+  position: absolute;
+  left: 0;
+  width: calc(var(--thumb-w) / 2 + (100% - var(--thumb-w)) * var(--p, 0));
+  transition: width 120ms linear;
+}
+
+.est-extent {
+  top: -1px;
+  height: 3px;
+  background: var(--ink);
+}
+
+.est-extent-shade {
+  inset-block: 0;
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+.est-range {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.est-range::-webkit-slider-runnable-track {
+  height: var(--thumb-h);
+  background: transparent;
+  border: 0;
+}
+
+.est-range::-moz-range-track {
+  height: var(--thumb-h);
+  background: transparent;
+  border: 0;
+}
+
+.est-range::-moz-range-progress {
+  background: transparent;
+}
+
+/* Slide-rule cursor: ink caps above and below the blade, a clear window, one amber reading line */
+.est-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: var(--thumb-w);
+  height: var(--thumb-h);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) top / 100% var(--blade-inset) no-repeat,
+    linear-gradient(var(--ink), var(--ink)) bottom / 100% var(--blade-inset) no-repeat,
+    linear-gradient(var(--color-worklight), var(--color-worklight)) center / 2px 100% no-repeat,
+    color-mix(in srgb, var(--surface) 30%, transparent);
+  cursor: grab;
+  transition:
+    background-color 200ms var(--est-ease),
+    box-shadow 200ms var(--est-ease);
+}
+
+.est-range::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--thumb-w);
+  height: var(--thumb-h);
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) top / 100% var(--blade-inset) no-repeat,
+    linear-gradient(var(--ink), var(--ink)) bottom / 100% var(--blade-inset) no-repeat,
+    linear-gradient(var(--color-worklight), var(--color-worklight)) center / 2px 100% no-repeat,
+    color-mix(in srgb, var(--surface) 30%, transparent);
+  cursor: grab;
+  transition:
+    background-color 200ms var(--est-ease),
+    box-shadow 200ms var(--est-ease);
+}
+
+.est-range:hover::-webkit-slider-thumb {
+  background-color: color-mix(in srgb, var(--surface) 70%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.est-range:hover::-moz-range-thumb {
+  background-color: color-mix(in srgb, var(--surface) 70%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.est-range:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.est-range:active::-moz-range-thumb {
+  cursor: grabbing;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.est-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ── Option rows (finish level radios, add-on checkboxes) ── */
+.est-option {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The native input is visually hidden; its focus ring moves to the row (same amber + graphite band) */
+.est-option:has(input:focus-visible) {
+  z-index: 2;
+  outline: 2px solid var(--color-worklight);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px var(--color-graphite);
+}
+
+.surface-dark .est-option:has(input:focus-visible) {
+  box-shadow: none;
+}
+
+/* Registration ticks at the corners of the selected row */
+.est-corners {
+  position: absolute;
+  inset: 5px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(1.03);
+  transition:
+    opacity 200ms var(--est-ease),
+    transform 260ms var(--est-ease);
+}
+
+.est-corners > span {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-color: var(--ink);
+}
+
+.est-option:has(input:checked) .est-corners {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Radio: ring → graphite disc with an amber point */
+.est-radio {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1px solid color-mix(in srgb, var(--ink) 55%, transparent);
+  border-radius: 999px;
+  transition:
+    background-color 200ms var(--est-ease),
+    border-color 200ms var(--est-ease);
+}
+
+.est-radio::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-worklight);
+  transform: scale(0);
+  transition: transform 220ms var(--est-ease);
+}
+
+.est-option:hover .est-radio {
+  border-color: var(--ink);
+}
+
+.est-option:has(input:checked) .est-radio {
+  background: var(--color-graphite);
+  border-color: var(--color-graphite);
+}
+
+.est-option:has(input:checked) .est-radio::after {
+  transform: scale(1);
+}
+
+/* Checkbox: square → graphite fill with an amber tick that draws on */
+.est-check {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1px solid color-mix(in srgb, var(--ink) 55%, transparent);
+  border-radius: 2px;
+  color: var(--color-worklight);
+  transition:
+    background-color 200ms var(--est-ease),
+    border-color 200ms var(--est-ease);
+}
+
+.est-check path {
+  stroke-width: 2;
+  stroke-dasharray: 16;
+  stroke-dashoffset: 16;
+  transition: stroke-dashoffset 260ms var(--est-ease) 40ms;
+}
+
+.est-option:hover .est-check {
+  border-color: var(--ink);
+}
+
+.est-option:has(input:checked) .est-check {
+  background: var(--color-graphite);
+  border-color: var(--color-graphite);
+}
+
+.est-option:has(input:checked) .est-check path {
+  stroke-dashoffset: 0;
+}
+
+/* On graphite the marks invert: plaster disc / box, graphite point / tick */
+.surface-dark .est-option:has(input:checked) .est-radio,
+.surface-dark .est-option:has(input:checked) .est-check {
+  background: var(--color-plaster);
+  border-color: var(--color-plaster);
+}
+
+.surface-dark .est-option:has(input:checked) .est-radio::after {
+  background: var(--color-graphite);
+}
+
+.surface-dark .est-check {
+  color: var(--color-graphite);
+}
+
+/* ── Range dimension line on the cost scale ── */
+.est-span {
+  transition:
+    left 760ms var(--est-ease),
+    right 760ms var(--est-ease);
+}
+
+/* ── Floating running total (shown while the result is off-screen) ── */
+.est-readout {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, -8px, 0);
+  transition:
+    opacity 220ms var(--est-ease),
+    transform 260ms var(--est-ease),
+    visibility 0s linear 260ms;
+}
+
+.est-readout[data-shown="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 220ms var(--est-ease),
+    transform 260ms var(--est-ease),
+    visibility 0s;
+}
+
+/* ── Static (screenshots) and reduced motion: every state instant ── */
+.est-static .est-odo-digit::before,
+.est-static .est-extent,
+.est-static .est-extent-shade,
+.est-static .est-corners,
+.est-static .est-radio,
+.est-static .est-radio::after,
+.est-static .est-check,
+.est-static .est-check path,
+.est-static .est-span,
+.est-static .est-readout {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .est-odo-digit::before,
+  .est-extent,
+  .est-extent-shade,
+  .est-corners,
+  .est-radio::after,
+  .est-check path,
+  .est-span,
+  .est-readout {
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .est-odo-digit {
+    -webkit-text-fill-color: currentColor;
+    mask-image: none;
+  }
+  .est-odo-digit::before {
+    display: none;
+  }
+}
