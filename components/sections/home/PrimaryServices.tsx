@@ -35,7 +35,7 @@ const recRoomCaption = whatWeBuild.tiles.find((tile) => tile.image === media.til
 
 /**
  * Home §4, "Two things, done properly." Two unequal, staggered panels on the drafting grid:
- * Drywall over seven columns, Basements over five, set lower with the intro hanging above it on
+ * Drywall over seven columns, Renovations (basements, bathrooms, kitchens) over five, set lower with the intro hanging above it on
  * the same left edge. A dimension line under the H2 states the section's one fact.
  */
 export function PrimaryServices({ id = "services", className }: { id?: string; className?: string }) {
@@ -93,7 +93,7 @@ export function PrimaryServices({ id = "services", className }: { id?: string; c
               title={basement.title}
               text={basement.text}
               link={basement.link}
-              quote={{ label: ctas.primary, href: quoteHref("basement-renovation") }}
+              quote={basement.secondary ?? { label: ctas.primary, href: quoteHref("basement-renovation") }}
               project={pairs.basement}
               fallback={media.tileRecRoom}
               fallbackCaption={recRoomCaption}

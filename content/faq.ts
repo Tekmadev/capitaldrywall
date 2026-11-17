@@ -185,8 +185,15 @@ const items: Record<string, FaqItem> = {
     id: "full-kitchen",
     question: "Do you do full kitchen renovations?",
     answer:
-      "We focus on kitchen upgrades: cabinets, backsplash, drywall, paint and finishing. For larger remodels, ask us and we'll tell you honestly what we can take on.",
+      "Yes. We take on full kitchen renovations, from tear-out to new cabinets, counters, backsplash, flooring and paint, as well as refreshes that keep your layout. Plumbing and electrical are done by licensed trades, scheduled by us.",
     confirm: true,
+  },
+  /** Draft, pending owner approval (2026-11-17), with the renovations page copy. */
+  "remodel-or-refresh": {
+    id: "remodel-or-refresh",
+    question: "Should I remodel my bathroom or just refresh it?",
+    answer:
+      "If the layout works for you and the walls behind the tile are sound, a refresh (new vanity, fixtures, tile and paint) gets you most of the way. If you want to move fixtures, change a tub to a shower, or there's water damage behind the walls, a full remodel is the better spend. We'll tell you which after seeing the space.",
   },
   "quotes-really-free": {
     id: "quotes-really-free",
@@ -237,7 +244,7 @@ const pageOrder: Record<FaqPage, string[]> = {
     "live-at-home",
     "basement-value",
   ],
-  renovations: ["bathroom-cost", "paint-after-drywall", "kitchen-duration", "full-kitchen"],
+  renovations: ["bathroom-cost", "remodel-or-refresh", "full-kitchen", "kitchen-duration", "paint-after-drywall"],
   quote: ["quotes-really-free", "send-photos", "how-soon"],
 };
 

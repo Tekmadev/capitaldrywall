@@ -138,6 +138,128 @@ export const media = {
     kind: "concept",
   },
 
+  /* Bathroom + kitchen transformation keyframes (concept) */
+  bathroomStage1Desktop: {
+    src: "/images/bathroom/bathroom-stage-1-desktop.jpg",
+    ...W16,
+    alt: "Dated 1990s Ottawa bathroom with an almond tub, beige tile and an oak vanity (concept visualization)",
+    kind: "concept",
+  },
+  bathroomStage2Desktop: {
+    src: "/images/bathroom/bathroom-stage-2-desktop.jpg",
+    ...W16,
+    alt: "The same bathroom stripped to the studs with new plumbing roughed in (concept visualization)",
+    kind: "concept",
+  },
+  bathroomStage3Desktop: {
+    src: "/images/bathroom/bathroom-stage-3-desktop.jpg",
+    ...W16,
+    alt: "The same bathroom with moisture-resistant board, waterproofing membrane and a new tub (concept visualization)",
+    kind: "concept",
+  },
+  bathroomStage4Desktop: {
+    src: "/images/bathroom/bathroom-stage-4-desktop.jpg",
+    ...W16,
+    alt: "The same bathroom finished with large-format tile, a floating oak vanity and a round mirror (concept visualization)",
+    kind: "concept",
+  },
+  bathroomPosterDesktop: {
+    src: "/images/bathroom/bathroom-poster-desktop.jpg",
+    ...W16,
+    alt: "Dated 1990s Ottawa bathroom with an almond tub, beige tile and an oak vanity (concept visualization)",
+    kind: "concept",
+  },
+  bathroomStage1Mobile: {
+    src: "/images/bathroom/bathroom-stage-1-mobile.jpg",
+    ...M916,
+    alt: "Dated 1990s Ottawa bathroom with an almond tub, beige tile and an oak vanity (concept visualization)",
+    kind: "concept",
+  },
+  bathroomStage2Mobile: {
+    src: "/images/bathroom/bathroom-stage-2-mobile.jpg",
+    ...M916,
+    alt: "The same bathroom stripped to the studs with new plumbing roughed in (concept visualization)",
+    kind: "concept",
+  },
+  bathroomStage3Mobile: {
+    src: "/images/bathroom/bathroom-stage-3-mobile.jpg",
+    ...M916,
+    alt: "The same bathroom with moisture-resistant board, waterproofing membrane and a new tub (concept visualization)",
+    kind: "concept",
+  },
+  bathroomStage4Mobile: {
+    src: "/images/bathroom/bathroom-stage-4-mobile.jpg",
+    ...M916,
+    alt: "The same bathroom finished with large-format tile, a floating oak vanity and a round mirror (concept visualization)",
+    kind: "concept",
+  },
+  bathroomPosterMobile: {
+    src: "/images/bathroom/bathroom-poster-mobile.jpg",
+    ...M916,
+    alt: "Dated 1990s Ottawa bathroom with an almond tub, beige tile and an oak vanity (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage1Desktop: {
+    src: "/images/kitchen/kitchen-stage-1-desktop.jpg",
+    ...W16,
+    alt: "Dated 1990s Ottawa kitchen with oak cabinets, laminate counters and almond tile (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage2Desktop: {
+    src: "/images/kitchen/kitchen-stage-2-desktop.jpg",
+    ...W16,
+    alt: "The same kitchen torn out to patched drywall with plumbing and electrical roughed in (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage3Desktop: {
+    src: "/images/kitchen/kitchen-stage-3-desktop.jpg",
+    ...W16,
+    alt: "The same kitchen with new white shaker cabinets, a quartz counter and oak flooring installed (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage4Desktop: {
+    src: "/images/kitchen/kitchen-stage-4-desktop.jpg",
+    ...W16,
+    alt: "The same kitchen finished with a white tile backsplash, brass pulls and a stainless range (concept visualization)",
+    kind: "concept",
+  },
+  kitchenPosterDesktop: {
+    src: "/images/kitchen/kitchen-poster-desktop.jpg",
+    ...W16,
+    alt: "Dated 1990s Ottawa kitchen with oak cabinets, laminate counters and almond tile (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage1Mobile: {
+    src: "/images/kitchen/kitchen-stage-1-mobile.jpg",
+    ...M916,
+    alt: "Dated 1990s Ottawa kitchen with oak cabinets, laminate counters and almond tile (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage2Mobile: {
+    src: "/images/kitchen/kitchen-stage-2-mobile.jpg",
+    ...M916,
+    alt: "The same kitchen torn out to patched drywall with plumbing and electrical roughed in (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage3Mobile: {
+    src: "/images/kitchen/kitchen-stage-3-mobile.jpg",
+    ...M916,
+    alt: "The same kitchen with new white shaker cabinets, a quartz counter and oak flooring installed (concept visualization)",
+    kind: "concept",
+  },
+  kitchenStage4Mobile: {
+    src: "/images/kitchen/kitchen-stage-4-mobile.jpg",
+    ...M916,
+    alt: "The same kitchen finished with a white tile backsplash, brass pulls and a stainless range (concept visualization)",
+    kind: "concept",
+  },
+  kitchenPosterMobile: {
+    src: "/images/kitchen/kitchen-poster-mobile.jpg",
+    ...M916,
+    alt: "Dated 1990s Ottawa kitchen with oak cabinets, laminate counters and almond tile (concept visualization)",
+    kind: "concept",
+  },
+
   /* Atmosphere stills: 16:9 and 4:5 */
   tapingKnife16x9: {
     src: "/images/atmosphere/taping-knife-16x9.jpg",
@@ -391,6 +513,10 @@ export const sequences = {
   heroMobile: "/sequences/hero-mobile",
   basementDesktop: "/sequences/basement-desktop",
   basementMobile: "/sequences/basement-mobile",
+  bathroomDesktop: "/sequences/bathroom-desktop",
+  bathroomMobile: "/sequences/bathroom-mobile",
+  kitchenDesktop: "/sequences/kitchen-desktop",
+  kitchenMobile: "/sequences/kitchen-mobile",
 } as const;
 
 export type SequenceManifest = {

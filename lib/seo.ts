@@ -117,17 +117,17 @@ export const pageSeo: Record<SeoPageKey, PageSeo> = {
   },
   renovations: {
     path: pages.renovations,
-    title: "Painting, Bathroom & Kitchen Renovations Ottawa | Capital",
+    title: "Bathroom & Kitchen Renovations Ottawa | Capital Drywall",
     description:
-      "Interior painting, bathroom remodels and kitchen updates in Ottawa, finished to the same standard as our drywall. Free quotes from Capital Drywall.",
-    name: "Renovations",
+      "Bathroom and kitchen renovations in Ottawa, from full remodels to refreshes, plus interior painting. Built on properly finished walls. Free quotes.",
+    name: "Bathroom & kitchen renovations",
     og: {
-      title: "Painting, bathroom &\nkitchen renovations\nin Ottawa",
+      title: "Bathroom & kitchen\nrenovations\nin Ottawa",
       index: "03",
       label: "Renovations",
       sheet: "A-03",
       scale: {
-        ticks: ["Painting", "Bathrooms", "Kitchens"],
+        ticks: ["Bathrooms", "Kitchens", "Painting"],
         caption: "Same standard, every room",
       },
     },

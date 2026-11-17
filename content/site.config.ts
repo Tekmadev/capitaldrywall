@@ -109,7 +109,7 @@ export const site: SiteConfig = {
     "Cumberland",
   ], // CONFIRM
   social: { gbp: "", facebook: "", instagram: "" },
-  lastUpdated: "2026-10-30",
+  lastUpdated: "2026-11-17",
   features: {
     popcornRemoval: true, // CONFIRM; hides section, FAQ, price card, schema offer
     reviews: false, // turn on with real Google reviews

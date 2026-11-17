@@ -5,7 +5,7 @@ import { DetailBubble } from "@/components/ui/drafting";
 import { ArrowIcon } from "@/components/ui/icons";
 import { LastUpdated } from "@/components/ui/LastUpdated";
 import { MediaFrame } from "@/components/ui/MediaFrame";
-import { renovationSections, renovationsBreadcrumb, renovationsHero } from "@/content/copy/renovations";
+import { renovationIndex, renovationsBreadcrumb, renovationsHero } from "@/content/copy/renovations";
 import { pad2 } from "@/lib/utils";
 import { sheetFor } from "./parts";
 import "./renovations.css";
@@ -78,13 +78,14 @@ export function RenovationsHero() {
             aria-label="Renovation services on this page"
             className="col-span-full mt-14 md:mt-16 lg:col-span-7 lg:col-start-6 lg:mt-16"
           >
-            <DimensionLine label={`${renovationSections.length} services · one standard`} className="mb-3 md:mb-5" />
+            <DimensionLine label={`${renovationIndex.length} services · one standard`} className="mb-3 md:mb-5" />
             <ol className="reno-strip">
-              {renovationSections.map((s, i) => (
+              {renovationIndex.map((s, i) => (
                 <li key={s.id}>
                   <a href={`#${s.id}`} className="group/panel block pb-6">
                     <MediaFrame
                       media={{ ...s.imageTall, alt: "" }}
+                      ratio="4 / 5"
                       sizes="(min-width: 1024px) 17vw, (min-width: 768px) 30vw, 64vw"
                       caption={false}
                       marks={false}

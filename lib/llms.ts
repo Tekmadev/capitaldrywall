@@ -15,7 +15,7 @@ import { drywallIntro, drywallSubServices, finishLevels } from "@/content/copy/d
 import { processSection, serviceAreaSection } from "@/content/copy/global";
 import { promises } from "@/content/copy/home";
 import { quoteAbout, quoteSidebar } from "@/content/copy/quote";
-import { renovationSections, renovationsIntro, whyDrywallSpecialist } from "@/content/copy/renovations";
+import { renovationSections, renovationsIntro, roomSections, whyDrywallSpecialist } from "@/content/copy/renovations";
 import { getAllFaqs, getFaqs, type FaqItem, type FaqPage } from "@/content/faq";
 import {
   drywallPrices,
@@ -50,7 +50,7 @@ function summary(): string {
     "skim coating and Level 5 finishes",
     popcorn ? "popcorn ceiling removal" : null,
   ].filter(Boolean);
-  return `> Drywall and basement renovation contractor in Ottawa, Ontario, Canada. Services: ${drywall.join(", ")}, and complete basement finishing. Also interior painting, bathroom renovations and kitchen renovations.`;
+  return `> Drywall and basement renovation contractor in Ottawa, Ontario, Canada. Services: ${drywall.join(", ")}, and complete basement finishing. Also bathroom renovations, kitchen renovations (full remodels and refreshes) and interior painting.`;
 }
 
 /** The template's service-area line, keeping only communities still listed in content/areas.ts. */
@@ -107,7 +107,7 @@ function pageList(): string {
     "## Pages",
     `- [Drywall services](${absoluteUrl(pages.drywall)}): ${drywallTopics.join(", ")}`,
     `- [Basement renovations](${absoluteUrl(pages.basement)}): basement finishing, what's included, costs, timeline, permits${feature("estimator") ? ", estimator" : ""}`,
-    `- [Painting, bathroom & kitchen renovations](${absoluteUrl(pages.renovations)})`,
+    `- [Bathroom & kitchen renovations](${absoluteUrl(pages.renovations)}): full remodels and refreshes, interior painting`,
     `- [Free quote](${absoluteUrl(pages.quote)})`,
   ]);
 }
@@ -227,10 +227,24 @@ function basementSection(shown: Set<string>): string {
 
 function renovationsSection(shown: Set<string>): string {
   return block([
-    "## Painting, bathroom & kitchen renovations",
+    "## Bathroom & kitchen renovations (and interior painting)",
     `URL: ${absoluteUrl(pages.renovations)}`,
     "",
     renovationsIntro,
+    "",
+    roomSections
+      .map((s) =>
+        block([
+          `### ${s.title}`,
+          `URL: ${absoluteUrl(`${pages.renovations}#${s.id}`)}`,
+          "",
+          s.body,
+          "",
+          ...s.scopes.flatMap((scope) => [`${scope.title}: ${scope.lede}`, bullets(scope.items), ""]),
+          s.note,
+        ]),
+      )
+      .join("\n\n"),
     "",
     renovationSections
       .map((s) =>

@@ -15,7 +15,12 @@ import { shade } from "./scene-utils";
 
 type Cta = { label: string; href: string };
 
+/** Which room the scene builds (frames, stills and posters; the basement is the original). */
+export type SceneRoom = "basement" | "bathroom" | "kitchen";
+
 type CommonProps = {
+  /** Defaults to "basement" */
+  room?: SceneRoom;
   /** The four stage labels: "Plan & permit", "Frame & insulate", "Drywall & ceilings", "Floors, trim & paint" */
   stages: string[];
   /** Corner label; defaults to "Concept visualization" (the frames are AI-generated) */
@@ -56,13 +61,43 @@ export type BasementTeaserProps = CommonProps & {
   /** Optional mono quote link beside `link`, e.g. { label: "Get a Free Quote", href: "/free-quote?service=basement-renovation" } */
   quote?: Cta;
   headingAs?: "h2" | "h3";
+  /** Mirror the teaser from 768 px: scene bleeding off the left edge, text column on the right */
+  flip?: boolean;
 };
 
 export type BasementTransformProps = BasementHeroProps | BasementTeaserProps;
 
-const stills = {
-  desktop: [media.basementStage1Desktop, media.basementStage2Desktop, media.basementStage3Desktop, media.basementStage4Desktop],
-  mobile: [media.basementStage1Mobile, media.basementStage2Mobile, media.basementStage3Mobile, media.basementStage4Mobile],
+type SceneAssets = {
+  stills: { desktop: MediaAsset[]; mobile: MediaAsset[] };
+  poster: { desktop: MediaAsset; mobile: MediaAsset };
+  sequence: { desktop: string; mobile: string };
+};
+
+const SCENES: Record<SceneRoom, SceneAssets> = {
+  basement: {
+    stills: {
+      desktop: [media.basementStage1Desktop, media.basementStage2Desktop, media.basementStage3Desktop, media.basementStage4Desktop],
+      mobile: [media.basementStage1Mobile, media.basementStage2Mobile, media.basementStage3Mobile, media.basementStage4Mobile],
+    },
+    poster: { desktop: media.basementPosterDesktop, mobile: media.basementPosterMobile },
+    sequence: { desktop: sequences.basementDesktop, mobile: sequences.basementMobile },
+  },
+  bathroom: {
+    stills: {
+      desktop: [media.bathroomStage1Desktop, media.bathroomStage2Desktop, media.bathroomStage3Desktop, media.bathroomStage4Desktop],
+      mobile: [media.bathroomStage1Mobile, media.bathroomStage2Mobile, media.bathroomStage3Mobile, media.bathroomStage4Mobile],
+    },
+    poster: { desktop: media.bathroomPosterDesktop, mobile: media.bathroomPosterMobile },
+    sequence: { desktop: sequences.bathroomDesktop, mobile: sequences.bathroomMobile },
+  },
+  kitchen: {
+    stills: {
+      desktop: [media.kitchenStage1Desktop, media.kitchenStage2Desktop, media.kitchenStage3Desktop, media.kitchenStage4Desktop],
+      mobile: [media.kitchenStage1Mobile, media.kitchenStage2Mobile, media.kitchenStage3Mobile, media.kitchenStage4Mobile],
+    },
+    poster: { desktop: media.kitchenPosterDesktop, mobile: media.kitchenPosterMobile },
+    sequence: { desktop: sequences.kitchenDesktop, mobile: sequences.kitchenMobile },
+  },
 };
 
 /* Static-only / motion-only switches (reduced motion, forceStatic, and the <noscript> style). */
@@ -82,7 +117,8 @@ const noscriptCss =
  * - `variant="teaser"`: home, text in a side column, ~200vh.
  */
 export function BasementTransform(props: BasementTransformProps) {
-  const { variant, stages, conceptLabel, forceStatic = false, demoProgress, id, className } = props;
+  const { variant, room = "basement", stages, conceptLabel, forceStatic = false, demoProgress, id, className } = props;
+  const { stills, poster, sequence } = SCENES[room];
   const headingId = useId();
   const reduced = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -106,6 +142,7 @@ export function BasementTransform(props: BasementTransformProps) {
     const cancelIdle = afterLoadIdle(() => {
       scene = createBasementScene(section, {
         hero: isHero,
+        sequence,
         demoProgress,
         onNeedStills: () => setStillsMode(true),
       });
@@ -118,7 +155,7 @@ export function BasementTransform(props: BasementTransformProps) {
       ro.disconnect();
       if (stage) stage.style.top = "";
     };
-  }, [forceStatic, reduced, demoProgress, isHero]);
+  }, [forceStatic, reduced, demoProgress, isHero, sequence]);
 
   // Stills just mounted: paint the current stage into them.
   useEffect(() => {
@@ -132,8 +169,8 @@ export function BasementTransform(props: BasementTransformProps) {
     <div className="absolute inset-0 overflow-hidden bg-graphite-2">
       <ScenePoster
         priority={isHero}
-        desktop={media.basementPosterDesktop}
-        mobile={media.basementPosterMobile}
+        desktop={poster.desktop}
+        mobile={poster.mobile}
         sizes={mediaSizes}
       />
         {stillsMode ? (
@@ -269,7 +306,7 @@ export function BasementTransform(props: BasementTransformProps) {
         {stages.map((label, i) => (
           <li key={label}>
             <MediaFrame
-              media={stills.desktop[i] as MediaAsset}
+              media={stills.desktop[i]}
               sizes={isHero ? "(min-width: 1024px) 24vw, (min-width: 640px) 48vw, 100vw" : "(min-width: 768px) 32vw, (min-width: 640px) 48vw, 100vw"}
               fig={i + 1}
               caption={label}
@@ -347,7 +384,7 @@ export function BasementTransform(props: BasementTransformProps) {
     );
   }
 
-  const { index, eyebrow, sheet, title, body, link, quote, headingAs: Heading = "h2" } = props;
+  const { index, eyebrow, sheet, title, body, link, quote, headingAs: Heading = "h2", flip = false } = props;
   return (
     <section
       ref={sectionRef}
@@ -363,7 +400,10 @@ export function BasementTransform(props: BasementTransformProps) {
           {/* Text column: in flow on mobile, sticky beside the scene from 768 px */}
           <div
             data-bt-sticky=""
-            className="col-span-full flex flex-col justify-center gap-6 pb-10 pt-20 md:sticky md:top-0 md:col-span-4 md:h-svh md:py-[calc(var(--header-h)_+_1rem)] group-data-[static]/bt:md:static group-data-[static]/bt:md:h-auto motion-reduce:md:static motion-reduce:md:h-auto"
+            className={cn(
+              "col-span-full flex flex-col justify-center gap-6 pb-10 pt-20 md:sticky md:top-0 md:col-span-4 md:h-svh md:py-[calc(var(--header-h)_+_1rem)] group-data-[static]/bt:md:static group-data-[static]/bt:md:h-auto motion-reduce:md:static motion-reduce:md:h-auto",
+              flip && "md:order-2",
+            )}
           >
             <p className="t-spec flex items-center gap-3">
               <span className="whitespace-nowrap">
@@ -394,8 +434,15 @@ export function BasementTransform(props: BasementTransformProps) {
             </div>
           </div>
 
-          {/* Scene column, bleeding off the right edge */}
-          <div className="col-span-full md:col-span-8 md:mr-[calc(min(0px,(var(--container-site)_-_100vw)_/_2)_-_var(--page-pad))]">
+          {/* Scene column, bleeding off the right edge (the left one when flipped) */}
+          <div
+            className={cn(
+              "col-span-full md:col-span-8",
+              flip
+                ? "md:order-1 md:ml-[calc(min(0px,(var(--container-site)_-_100vw)_/_2)_-_var(--page-pad))]"
+                : "md:mr-[calc(min(0px,(var(--container-site)_-_100vw)_/_2)_-_var(--page-pad))]",
+            )}
+          >
             <div
               data-el="track"
               data-bt-track=""
@@ -430,7 +477,12 @@ const HOLD_END = 0.06;
 
 function createBasementScene(
   section: HTMLElement,
-  { hero, demoProgress, onNeedStills }: { hero: boolean; demoProgress?: number; onNeedStills: () => void },
+  {
+    hero,
+    sequence,
+    demoProgress,
+    onNeedStills,
+  }: { hero: boolean; sequence: SceneAssets["sequence"]; demoProgress?: number; onNeedStills: () => void },
 ): BasementScene {
   const q = <T extends HTMLElement = HTMLElement>(sel: string) => section.querySelector<T>(sel);
   const qa = <T extends HTMLElement = HTMLElement>(sel: string) => Array.from(section.querySelectorAll<T>(sel));
@@ -445,7 +497,7 @@ function createBasementScene(
   const count = stepItems.length || 4;
 
   const demo = typeof demoProgress === "number";
-  const seq = new FrameSequence(pickFolder({ desktop: sequences.basementDesktop, mobile: sequences.basementMobile }));
+  const seq = new FrameSequence(pickFolder(sequence));
   let painter: FramePainter | null = null;
   let disposed = false;
   let visible = true;

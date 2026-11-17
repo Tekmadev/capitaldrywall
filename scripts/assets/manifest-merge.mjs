@@ -9,14 +9,15 @@ const GROUPS = [
   ["hero", "assets-src/manifest/hero.md"],
   ["basement", "assets-src/manifest/basement.md"],
   ["stills", "assets-src/manifest/stills.md"],
+  ["rooms", "assets-src/manifest/rooms.md"],
 ];
 
 const header = `# Generated asset manifest: Capital Drywall & Renovation
 
 Every image, frame and clip on the site that came out of a generative model is logged here with its
 prompt, model, seed and post-processing. The Higgsfield API does not expose seeds for any model used, so
-each entry gives the job id instead. Sections 4-6 are the group manifests, merged verbatim from
-\`assets-src/manifest/hero.md\`, \`basement.md\` and \`stills.md\` (edit those, then re-run
+each entry gives the job id instead. Sections 4-7 are the group manifests, merged verbatim from
+\`assets-src/manifest/hero.md\`, \`basement.md\`, \`stills.md\` and \`rooms.md\` (edit those, then re-run
 \`node scripts/assets/manifest-merge.mjs\`). \`node scripts/assets/verify-assets.mjs\` checks every output
 against its size, format and byte budget.
 
@@ -47,7 +48,7 @@ asset; every kept file was checked on contact sheets and full-resolution crops.
 
 **Everything in this manifest is AI-generated** (Higgsfield: \`nano_banana_pro\`, \`gpt_image_2_5\`,
 \`flux_3_image\`, \`kling3_0\`, \`minimax_h3\`). These are atmosphere images, concept visualizations
-(hero wall, basement transformation, raking-light panels, basement tiles) and demo samples (before/after
+(hero wall, basement, bathroom and kitchen transformations, raking-light panels, basement tiles) and demo samples (before/after
 pairs). **None of them shows a real client project, and none may be captioned or presented as completed
 client work** (brief §3, §7.3, §8.4). The basement sequence keeps its "Concept visualization" label, and
 the sample before/afters, prompted to look like jobsite photos, must always be labelled as samples.
@@ -65,11 +66,13 @@ Credits only throughout (\`use_unlim: false\`, no free generations, no credits b
 | **Balance before the finishing run** | **596.75** |
 | Basement clips run 2 (5 x \`minimax_h3\`, 14:57 UTC): duplicate takes of the five run-1 clips, whose job ids had been lost in the interruption | -50.00 |
 | **Final balance (2026-10-31, after the finishing run)** | **546.75** |
-| **Project total** | **347.75** |
+| **Project total (first build)** | **347.75** |
+| Rooms group (2026-11-17, 31 jobs; account balance 504.00 before the first job, 342.00 after the last) | -162.00 |
 
 By model: \`nano_banana_pro\` 63 jobs, 122 net (126 charged, 4 refunded); \`gpt_image_2_5\` 7 jobs, 19.25;
 \`flux_3_image\` 2 jobs, 6; \`kling3_0\` 9 jobs, 80.50; \`minimax_h3\` 12 jobs, 120. The per-group tallies are in
-sections 4-6 and add up to the account history.
+sections 4-6 and add up to the account history. The rooms group (section 7) adds \`nano_banana_pro\` 19 jobs, 42;
+\`minimax_h3\` 12 jobs, 120.
 
 ## Output index
 
@@ -78,6 +81,7 @@ sections 4-6 and add up to the account history.
 | \`public/sequences/hero-{desktop,mobile}/\`, \`public/images/hero/*\`, \`public/video/drywall-raking-loop.{mp4,webm}\`, \`assets/og/og-base.jpg\`, \`public/images/atmosphere/wall-stage-*\` | 4 (hero) |
 | \`public/sequences/basement-{desktop,mobile}/\`, \`public/images/basement/*\` | 5 (basement) |
 | \`public/images/raking/*\`, \`public/images/atmosphere/*\` (other than wall-stage), \`public/images/basement-tiles/*\`, \`public/images/samples/*\` | 6 (stills) |
+| \`public/sequences/{bathroom,kitchen}-{desktop,mobile}/\`, \`public/images/{bathroom,kitchen}/*\` | 7 (rooms) |
 `;
 
 const demote = (md) =>

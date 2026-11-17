@@ -37,7 +37,7 @@ import type {
 import { areas } from "@/content/areas";
 import { basementIntro } from "@/content/copy/basement";
 import { drywallSubServices } from "@/content/copy/drywall";
-import { renovationSections } from "@/content/copy/renovations";
+import { renovationSections, roomSections } from "@/content/copy/renovations";
 import type { FaqItem } from "@/content/faq";
 import { drywallPrices, startingPrices, type StartingPrice } from "@/content/pricing";
 import { services, type Service as SiteService, type ServiceId, type ServicePage } from "@/content/services";
@@ -133,6 +133,7 @@ function serviceDescription(id: ServiceId): string | undefined {
   if (id === "basement-renovation") return basementIntro;
   return (
     drywallSubServices.find((s) => s.service === id)?.body ??
+    roomSections.find((s) => s.service === id)?.body ??
     renovationSections.find((s) => s.service === id)?.body
   );
 }

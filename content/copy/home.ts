@@ -39,8 +39,9 @@ export const primaryServices = {
   index: "01",
   eyebrow: "What we do best",
   title: "Two things, done properly.",
+  /** Intro and card 02 updated for the Renovations pillar (draft, pending owner approval, 2026-11-17). */
   intro:
-    "Most contractors do a bit of everything. We built Capital around the two jobs where the finish matters most.",
+    "Most contractors do a bit of everything. We built Capital around drywall, and every room we renovate starts there: basements, bathrooms and kitchens finished on walls done properly.",
   cards: [
     {
       id: "drywall",
@@ -51,10 +52,11 @@ export const primaryServices = {
     },
     {
       id: "basement",
-      label: "BASEMENTS · FRAME · INSULATE · FINISH",
-      title: "Basement renovations",
-      text: "Framing, insulation, drywall, ceilings, flooring and paint. A cold, unused basement turned into the room your family actually uses.",
+      label: "BASEMENTS · BATHROOMS · KITCHENS",
+      title: "Renovations",
+      text: "Basements finished from the concrete up, and bathroom and kitchen remodels or refreshes. Framing, board, tile, cabinets, flooring and paint, on walls finished to our standard.",
       link: { label: "Explore basement renovations →", href: pages.basement },
+      secondary: { label: "Bathrooms & kitchens", href: pages.renovations },
     },
   ],
 };
@@ -125,29 +127,29 @@ export const promises = {
 
 export const secondaryServices = {
   index: "05",
-  eyebrow: "Also on the list",
+  eyebrow: "Bathrooms, kitchens & painting",
   title: "The rest of the house, finished to the same standard.",
   items: [
+    {
+      id: "bathroom-renovation",
+      title: "Bathroom renovations",
+      text: "Full remodels or refreshes: showers, tubs, vanities and tile, built dry behind the tile.",
+      href: `${pages.renovations}#bathroom-renovations`,
+    },
+    {
+      id: "kitchen-renovation",
+      title: "Kitchen renovations",
+      text: "Full renovations or refreshes: cabinets, counters, backsplash, floors and paint.",
+      href: `${pages.renovations}#kitchen-renovations`,
+    },
     {
       id: "interior-painting",
       title: "Interior painting",
       text: "Walls, ceilings, trim and doors, with the filling, sanding and priming that make paint last.",
       href: `${pages.renovations}#interior-painting`,
     },
-    {
-      id: "bathroom-renovation",
-      title: "Bathroom renovations",
-      text: "Showers, vanities and tile, built on moisture-resistant board and finished cleanly.",
-      href: `${pages.renovations}#bathroom-renovations`,
-    },
-    {
-      id: "kitchen-renovation",
-      title: "Kitchen renovations",
-      text: "Cabinet upgrades, backsplash and paint that refresh a kitchen without a full gut.",
-      href: `${pages.renovations}#kitchen-renovations`,
-    },
   ],
-  link: { label: "All renovation services →", href: pages.renovations },
+  link: { label: "Bathroom & kitchen renovations →", href: pages.renovations },
 };
 
 /** Home section numbering for the shared sections (copy deck eyebrows). */
