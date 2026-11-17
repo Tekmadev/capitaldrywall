@@ -27,6 +27,7 @@ import {
 import { pages, services } from "@/content/services";
 import { feature, site } from "@/content/site.config";
 import { absoluteUrl } from "@/lib/seo";
+import { prices } from "@/content/price";
 import { formatCAD } from "@/lib/utils";
 
 const popcorn = feature("popcornRemoval");
@@ -89,7 +90,7 @@ function keyFacts(): string {
     `- Phone: ${site.phone.display} · Email: ${site.email} · Hours: ${site.hours}`,
     "- Free on-site quotes; written quotes with scope, price and schedule",
     startingPriceLine(),
-    "- Typical basement finish in Ottawa: about $30,000–$60,000 for open-concept; 4–6 weeks of work after the permit is issued",
+    `- Typical basement finish in Ottawa: about ${formatCAD(prices.typical.basementFinish.low)}–${formatCAD(prices.typical.basementFinish.high)} for open-concept; 4–6 weeks of work after the permit is issued`,
     site.warranty ? `- Warranty: ${site.warranty.label}` : null,
     `- Website: ${site.url}`,
   ]);

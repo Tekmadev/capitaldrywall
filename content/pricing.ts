@@ -1,6 +1,13 @@
+import { prices } from "./price";
 import { feature, type FeatureFlag } from "./site.config";
 
-/* All prices: [CONFIRM] with the owner (copy deck: "CONFIRM all prices"). */
+/*
+ * Pricing wording and logic. Every NUMBER comes from content/price.ts (the one file to edit);
+ * this file only holds labels, descriptions and the estimator maths.
+ * All prices: [CONFIRM] with the owner (copy deck: "CONFIRM all prices").
+ */
+const from = prices.startingFrom;
+const rates = prices.basementEstimator;
 
 export type StartingPrice = {
   id: string;
@@ -17,30 +24,30 @@ const homeStartingPrices: StartingPrice[] = [
   {
     id: "drywall-repair",
     service: "Drywall repair",
-    from: 300,
+    from: from.drywallRepair,
     detail: "Patch, tape, three coats, sand. Primer-ready.",
   },
   {
     id: "popcorn-removal",
     service: "Popcorn ceiling removal",
-    from: 1000,
+    from: from.popcornRemovalPerRoom,
     detail: "Per average room. Removal, repair and smooth skim coat.",
     flag: "popcornRemoval",
   },
   {
     id: "basement-finishing",
     service: "Basement finishing",
-    from: 30000,
+    from: from.basementFinishing,
     detail: "Open-concept rec room, framing to paint.",
   },
 ];
 
 const drywallStartingPrices: StartingPrice[] = [
-  { id: "drywall-repair", service: "Drywall repair", from: 300, detail: "Patch, tape, three coats, sand. Primer-ready." },
+  { id: "drywall-repair", service: "Drywall repair", from: from.drywallRepair, detail: "Patch, tape, three coats, sand. Primer-ready." },
   {
     id: "popcorn-removal",
     service: "Popcorn ceiling removal",
-    from: 1000,
+    from: from.popcornRemovalPerRoom,
     unit: "per average room",
     detail: "Removal, repair and smooth skim coat.",
     flag: "popcornRemoval",
@@ -48,10 +55,10 @@ const drywallStartingPrices: StartingPrice[] = [
   {
     id: "installation-finishing",
     service: "Installation & finishing",
-    from: null,
+    from: from.drywallInstallation,
     detail: "Quoted per project, by square footage.",
   },
-  { id: "skim-coating", service: "Skim coating", from: null, detail: "Quoted per room." },
+  { id: "skim-coating", service: "Skim coating", from: from.skimCoating, detail: "Quoted per room." },
 ];
 
 const enabled = (p: StartingPrice) => !p.flag || feature(p.flag);
@@ -71,33 +78,33 @@ export const estimateNotice = "Estimate only, not a quote. HST extra.";
 
 export type FinishLevel = "essential" | "comfort" | "premium";
 export type AddOn = "bathroom" | "bedroom" | "wetbar";
-export type Range = { low: number; high: number };
+export type Range = { readonly low: number; readonly high: number };
 
 export const estimator = {
-  size: { min: 300, max: 1500, step: 50, initial: 800 },
+  size: rates.size,
   finishLevels: {
     essential: {
       label: "Essential",
       description: "Durable, good-looking basics: vinyl plank floor, pot lights, paint.",
-      perSqFt: { low: 45, high: 60 },
+      perSqFt: rates.perSqFt.essential,
     },
     comfort: {
       label: "Comfort",
       description: "Upgraded finishes, more lighting, built-in storage.",
-      perSqFt: { low: 60, high: 80 },
+      perSqFt: rates.perSqFt.comfort,
     },
     premium: {
       label: "Premium",
       description: "Custom features, premium flooring and millwork.",
-      perSqFt: { low: 80, high: 115 },
+      perSqFt: rates.perSqFt.premium,
     },
   } satisfies Record<FinishLevel, { label: string; description: string; perSqFt: Range }>,
   addOns: {
-    bathroom: { label: "Bathroom", cost: { low: 12000, high: 25000 } },
-    bedroom: { label: "Bedroom with egress window", cost: { low: 5000, high: 10000 } },
-    wetbar: { label: "Wet bar or kitchenette", cost: { low: 6000, high: 15000 } },
+    bathroom: { label: "Bathroom", cost: rates.addOns.bathroom },
+    bedroom: { label: "Bedroom with egress window", cost: rates.addOns.bedroom },
+    wetbar: { label: "Wet bar or kitchenette", cost: rates.addOns.wetbar },
   } satisfies Record<AddOn, { label: string; cost: Range }>,
-  roundTo: 1000,
+  roundTo: rates.roundTo,
   disclaimer: "Estimate only, based on typical Ottawa projects. Not a quote. HST extra.",
 } as const;
 

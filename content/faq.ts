@@ -3,6 +3,8 @@
  * (and it doubles as the knowledge base for a future AI receptionist). Copy is verbatim from
  * CAPITAL_COPY.md; placeholders and CONFIRM lines resolve from site.config.
  */
+import { formatCAD } from "../lib/utils";
+import { prices } from "./price";
 import { feature, site, type FeatureFlag } from "./site.config";
 
 export type FaqPage = "home" | "drywall" | "basement" | "renovations" | "quote";
@@ -24,8 +26,7 @@ const permitAnswer = [
   .filter(Boolean)
   .join(" ");
 
-const basementCostLead =
-  "Most open-concept basement finishes in Ottawa land between about $30,000 and $60,000.";
+const basementCostLead = `Most open-concept basement finishes in Ottawa land between about ${formatCAD(prices.typical.basementFinish.low)} and ${formatCAD(prices.typical.basementFinish.high)}.`;
 const basementCostBody = [
   "Adding a bathroom, bedroom or wet bar raises the price. Size, layout, plumbing and finish level are the biggest factors.",
   feature("estimator")
@@ -38,7 +39,7 @@ const items: Record<string, FaqItem> = {
     id: "drywall-repair-cost",
     question: "How much does drywall repair cost in Ottawa?",
     answer:
-      "Small drywall repairs in Ottawa, like holes, cracks and nail pops, typically start around $300. That includes tape, three coats of compound and sanding to a primer-ready finish. Larger repairs and water damage are priced after we see the area. Send photos for a fast estimate.",
+      `Small drywall repairs in Ottawa, like holes, cracks and nail pops, typically start around ${formatCAD(prices.startingFrom.drywallRepair)}. That includes tape, three coats of compound and sanding to a primer-ready finish. Larger repairs and water damage are priced after we see the area. Send photos for a fast estimate.`,
     confirm: true,
   },
   "basement-cost": {
@@ -50,7 +51,7 @@ const items: Record<string, FaqItem> = {
   "basement-cost-full": {
     id: "basement-cost-full",
     question: "How much does it cost to finish a basement in Ottawa?",
-    answer: `${basementCostLead} Larger or premium projects can pass $90,000. ${basementCostBody}`,
+    answer: `${basementCostLead} Larger or premium projects can pass ${formatCAD(prices.typical.basementPremiumOver)}. ${basementCostBody}`,
     confirm: true,
   },
   "basement-permit": {
@@ -165,7 +166,7 @@ const items: Record<string, FaqItem> = {
     id: "bathroom-cost",
     question: "How much does a bathroom renovation cost in Ottawa?",
     answer:
-      "A cosmetic bathroom refresh, like a new vanity, fixtures and tile without moving plumbing, often starts around $8,000 to $15,000 in Ottawa. Full remodels with a new shower, layout changes or premium tile cost more. We give a written quote after seeing the space.",
+      `A cosmetic bathroom refresh, like a new vanity, fixtures and tile without moving plumbing, often starts around ${formatCAD(prices.typical.bathroomRefresh.low)} to ${formatCAD(prices.typical.bathroomRefresh.high)} in Ottawa. Full remodels with a new shower, layout changes or premium tile cost more. We give a written quote after seeing the space.`,
     confirm: true,
   },
   "paint-after-drywall": {
