@@ -8,7 +8,7 @@
 import { site } from "../site.config";
 
 /** Date the policy text last changed (shown as "Last updated"). */
-export const privacyLastUpdated = "2026-10-30";
+export const privacyLastUpdated = "2026-11-19";
 
 export type PolicyBlock =
   | { type: "p"; lead?: string; text: string }
@@ -40,7 +40,7 @@ export const privacyPolicy: { title: string; intro: string; sections: PolicySect
         {
           type: "p",
           lead: "Information collected automatically:",
-          text: "we use privacy-friendly analytics that count page visits and actions without advertising cookies or cross-site tracking. Our hosting provider keeps standard server logs (such as IP address, browser type, pages requested, and date and time) for security and troubleshooting.",
+          text: "we use privacy-friendly analytics that count page visits and actions without advertising cookies or cross-site tracking. Our hosting provider keeps standard server logs (such as IP address, browser type, pages requested, and date and time) for security and troubleshooting. When you send a quote request, we also note how you found our website (for example an online ad, a search engine or a link on another site) and the first page you visited. Your browser keeps this only until you close the tab; we don't use a cookie for it.",
         },
         {
           type: "p",
@@ -83,6 +83,7 @@ export const privacyPolicy: { title: string; intro: string; sections: PolicySect
           type: "ul",
           items: [
             "with service providers who help us run our business, such as website hosting, email delivery, file storage and scheduling or customer-management tools. They may use it only to provide services to us and must protect it;",
+            "with the company that built and maintains our website, which keeps statistics about quote requests (the date, the services requested, the first three characters of your postal code, and how you found our website) so we can see how the website performs. It never receives your name, phone number, email address or project details;",
             "with licensed trades or suppliers working on your project, limited to what they need to do the work;",
             "when required or permitted by law.",
           ],

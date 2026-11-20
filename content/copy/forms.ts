@@ -96,6 +96,8 @@ export const quoteEmails = {
     footer: `${site.phone.display} · ${site.domain}`,
   },
   business: {
-    subject: (services: string, area: string) => `New quote request: ${services} · ${area}`,
+    /** `ref` is the lead-log number (e.g. CDR-0042), so the inbox and the lead log match */
+    subject: (services: string, area: string, ref?: string | null) =>
+      `New quote request${ref ? ` ${ref}` : ""}: ${services} · ${area}`,
   },
 } as const;

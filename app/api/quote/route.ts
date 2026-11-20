@@ -8,6 +8,7 @@ import { connection } from "next/server";
 import { z } from "zod";
 import { pages } from "@/content/services";
 import { site } from "@/content/site.config";
+import { readLeadSource } from "@/lib/lead-log/source";
 import { deliverLead } from "@/lib/quote/deliver";
 import { renderBusinessEmail, renderCustomerEmail } from "@/lib/quote/email";
 import { quoteErrorPage } from "@/lib/quote/html-response";
@@ -128,10 +129,11 @@ export async function POST(request: Request) {
   }
 
   const lead = parsed.data;
-  const { ok } = await deliverLead(lead, {
-    receivedAt: new Date(),
-    source: lead.source || refererPath(request),
-  });
+  const { ok } = await deliverLead(
+    lead,
+    { receivedAt: new Date(), source: lead.source || refererPath(request) },
+    readLeadSource(raw.attribution),
+  );
   if (!ok) return isForm ? quoteErrorPage({ status: 500, backHref }) : json({ ok: false, error: "delivery-failed" }, 500);
 
   return success();
@@ -166,7 +168,12 @@ export async function GET(request: Request) {
   const email =
     params.get("preview") === "customer"
       ? renderCustomerEmail(sample)
-      : renderBusinessEmail(sample, { receivedAt: new Date(), source: sample.source ?? null });
+      : renderBusinessEmail(sample, {
+          receivedAt: new Date(),
+          source: sample.source ?? null,
+          ref: "CDR-0042",
+          sourceLabel: "Google Ads (drywall-ottawa)",
+        });
   const text = params.get("format") === "text";
   return new Response(text ? `Subject: ${email.subject}\n\n${email.text}` : email.html, {
     headers: {

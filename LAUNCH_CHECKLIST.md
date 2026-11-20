@@ -72,6 +72,8 @@ A `null` or `false` value hides its UI. The site never shows a broken or invente
 |---|---|
 | `NEXT_PUBLIC_SITE_MODE=production` | Hides samples, the dev kitchen sink, and requires a lead delivery channel |
 | `RESEND_API_KEY`, `QUOTE_TO_EMAIL`, `QUOTE_FROM_EMAIL` | Quote notifications + customer confirmations (verify the sending domain in Resend) |
+| `LEAD_LOG_URL`, `LEAD_LOG_API_KEY`, `LEAD_LOG_SECRET` | Tekmadev lead log: each quote request is recorded (no contact details) and numbered (CDR-0001…); the number goes in the business email subject |
+| `RESEND_WEBHOOK_SECRET` | Delivery status (delivered / bounced) for the lead log. Resend → Webhooks → endpoint `https://capitaldrywallrenovations.com/api/resend-webhook` |
 | `BLOB_READ_WRITE_TOKEN` | Photo uploads on the quote form (otherwise photos stay "preview only") |
 | `LEAD_WEBHOOK_URL` | Optional: CRM / automation hook (POSTs each lead as JSON) |
 | `BOOKING_URL` | Optional: shows "Book a site visit" on /free-quote and /thank-you |

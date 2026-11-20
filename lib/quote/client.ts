@@ -1,5 +1,6 @@
 /** Browser-side helpers shared by the quote forms. */
 import { firstNameOf } from "@/content/site.config";
+import { readAttribution } from "@/lib/attribution";
 import type { QuoteInput } from "./schema";
 
 export type SubmitResult =
@@ -7,13 +8,13 @@ export type SubmitResult =
   | { ok: false; kind: "validation"; fieldErrors: Record<string, string[] | undefined> }
   | { ok: false; kind: "error" };
 
-/** POST a lead as JSON to /api/quote. Never throws. */
+/** POST a lead as JSON to /api/quote, with how the visitor found the site. Never throws. */
 export async function submitLead(payload: Record<string, unknown>): Promise<SubmitResult> {
   try {
     const res = await fetch("/api/quote", {
       method: "POST",
       headers: { "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ ...payload, attribution: readAttribution() }),
     });
     const body = (await res.json().catch(() => null)) as {
       ok?: boolean;

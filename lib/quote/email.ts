@@ -21,6 +21,10 @@ export type LeadMeta = {
   receivedAt: Date;
   /** Page the request was sent from */
   source: string | null;
+  /** Lead-log number (e.g. CDR-0042), null when the log is off or unreachable */
+  ref?: string | null;
+  /** How the visitor found the site, in plain words (e.g. "Google Ads"), null when unknown */
+  sourceLabel?: string | null;
 };
 
 export type RenderedEmail = { subject: string; html: string; text: string };
@@ -114,15 +118,17 @@ function rows(lead: Lead, meta: LeadMeta): Row[] {
     },
     { label: "Marketing consent", ...plain(lead.marketing ? "Yes" : "No") },
     { label: "Contact consent", ...plain(lead.consent ? "Yes" : "No") },
+    ...(meta.sourceLabel ? [{ label: "Found you via", ...plain(meta.sourceLabel) }] : []),
     { label: "Page source", ...plain(meta.source) },
     { label: "Received", ...plain(torontoTimestamp(meta.receivedAt)) },
+    ...(meta.ref ? [{ label: "Lead ref", ...plain(meta.ref) }] : []),
   ];
 }
 
 export function renderBusinessEmail(lead: Lead, meta: LeadMeta): RenderedEmail {
   const services = serviceLabels(lead.services).join(", ");
   const area = areaOf(lead) ?? "area not given";
-  const subject = quoteEmails.business.subject(services, area);
+  const subject = quoteEmails.business.subject(services, area, meta.ref);
   const list = rows(lead, meta);
   const e164 = phoneE164(lead.phone);
 
@@ -132,7 +138,7 @@ export function renderBusinessEmail(lead: Lead, meta: LeadMeta): RenderedEmail {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.paper};padding:24px 12px">
 <tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:${C.sheet};border:1px solid ${C.rule};border-collapse:collapse">
-<tr><td style="padding:14px 16px;border-bottom:3px solid ${C.amber};font-family:${MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${C.muted}">New quote request · ${escapeHtml(site.name)}</td></tr>
+<tr><td style="padding:14px 16px;border-bottom:3px solid ${C.amber};font-family:${MONO};font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${C.muted}">New quote request${meta.ref ? ` ${escapeHtml(meta.ref)}` : ""} · ${escapeHtml(site.name)}</td></tr>
 <tr><td style="padding:20px 16px 8px;font-family:${SANS};font-size:22px;line-height:1.25;font-weight:700;color:${C.ink}">${escapeHtml(services)}<br><span style="font-weight:400;color:${C.muted}">${escapeHtml(area)}</span></td></tr>
 ${
   e164
@@ -207,6 +213,8 @@ export function leadPayload(lead: Lead, meta: LeadMeta) {
   const full = lead.form === "full" ? lead : null;
   return {
     event: "quote.requested",
+    ref: meta.ref ?? null,
+    foundVia: meta.sourceLabel ?? null,
     receivedAt: meta.receivedAt.toISOString(),
     receivedAtLocal: torontoTimestamp(meta.receivedAt),
     form: lead.form,

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { track } from "@/lib/analytics";
+import { captureAttribution } from "@/lib/attribution";
 
 /**
  * Sitewide event delegation, so server components need no client code:
@@ -10,6 +11,11 @@ import { track } from "@/lib/analytics";
  *  - every `<details data-faq-id>` opened → faq_open { id }
  */
 export function AnalyticsListeners() {
+  useEffect(() => {
+    // Landing page of this visit: campaign tags, ad click ids, referrer (lib/attribution.ts)
+    captureAttribution();
+  }, []);
+
   useEffect(() => {
     const onClick = (event: MouseEvent) => {
       const target = event.target as Element | null;
